@@ -1,3 +1,11 @@
+"""
+Data related functions
+:aggregation:
+    - set aggregation
+    - set ingestion
+    - set encoding
+    - get status for each (todo)
+"""
 from anylog_api.generic_rest import RestConn
 
 
