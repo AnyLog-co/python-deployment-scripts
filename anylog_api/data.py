@@ -48,6 +48,7 @@ def set_aggregation(conn:RestConn|None, db_name:str, table_name:str, value_colum
 
     conn.execute_post(headers=headers)
 
+
 def set_ingestion(conn:RestConn, db_name:str, table_name:str="*", keep_source:bool=True, keep_aggregation:bool=False,
                   get_help:bool=False):
     """
@@ -77,3 +78,33 @@ def set_ingestion(conn:RestConn, db_name:str, table_name:str="*", keep_source:bo
         conn.get_help(command=headers["command"])
 
     conn.execute_post(headers=headers)
+
+
+def set_encoding(conn:RestConn, db_name:str, table_name:str, value_column:str, encoding=None, get_help:bool=False):
+    """
+    The command `set aggregations encoding` applies encoding on the values assigned to each time interval.
+    :args:
+        conn:RestConn - connection to AnyLog / EdgeLake
+        db_name:str - logical database name
+        table_name:str - logical table name
+        value_column:str - value column to run encoding against
+        encoding:str - encoding type
+            * None - no encoding
+            * bounds - all entries in the time interval are replaced with a single entry
+            * arle - Approximated Run-Length Encoding, the entries in the time interval are represented in a sequence of entries.
+        get_help::bool - print help for `set aggregation` instead of running command
+    :params:
+        headers:dict - REST headers
+    :print:
+        if get_help - print explanation for command
+    """
+    headers = {
+        "command": f"set aggregation encoding where dbms={db_name} and table={table_name} and value_column={value_column} {f' and encoding={encoding}' if encoding else ''}",
+        "User-Agent": "AnyLog/1.23"
+    }
+
+    if get_help:
+        conn.get_help(command=headers["command"])
+        return
+
+    conn.execute_post(headers=headers, data_payload=None, json_payload=None)

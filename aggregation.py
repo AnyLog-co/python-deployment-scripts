@@ -8,6 +8,7 @@ from anylog_api.dbms import list_columns
 from anylog_api.dbms import connect_dbms
 from anylog_api.data import set_aggregation
 from anylog_api.data import set_ingestion
+from anylog_api.data import set_encoding
 
 def main():
     parser = argparse.ArgumentParser()
@@ -22,7 +23,8 @@ def main():
     parser.add_argument("--interval-time", type=str, default="1 minute", help="time period per interval")
     parser.add_argument("--keep-source", type=bool, nargs='?', default=False, const=True, help="Store raw data into table(s)")
     parser.add_argument("--keep-aggregation", type=bool, nargs='?', default=False, const=True, help="Store aggregation insights into table(s)")
-
+    parser.add_argument("--encoding-type", type=str, choices=[None, "bounds", "arle"], default=None,
+                        help="encoding represented by data associated to a schema")
     args = parser.parse_args()
 
     # connect to AnyLog / EdgeLake
@@ -39,7 +41,7 @@ def main():
     if args.columns:
         for param in args.columns.split(','):
             table, column = param.strip().split('.')
-            if table not in columns and check_table(conn=conn, db_name=args.dbms, table_name=table):
+            if table not in columns: # and check_table(conn=conn, db_name=args.dbms, table_name=table):
                 columns[table] = {
                     "timestamp": None,
                     "columns": []
@@ -86,9 +88,11 @@ def main():
                             time_column=timestamp, intervals=args.intervals, interval_time=args.interval_time,
                             keep_aggregation=args.keep_aggregation, target_dbms=f"agg_{args.dbms}",
                             target_table=f"{table}_{column}")
+            set_encoding(conn=conn, db_name=args.dbms, table_name=table, value_column=column,
+                         encoding=args.encoding_type)
+
         set_ingestion(conn=conn, db_name=args.dbms, table_name=table, keep_source=args.keep_source,
                       keep_aggregation=args.keep_aggregation)
-
 
 
 if __name__ == "__main__":
