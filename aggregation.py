@@ -22,9 +22,9 @@ def main():
     parser.add_argument("--intervals", type=int, default=10, help="Number of intervals to keep in aggregation")
     parser.add_argument("--interval-time", type=str, default="1 minute", help="time period per interval")
     parser.add_argument("--keep-source", type=bool, nargs='?', default=False, const=True, help="Store raw data into table(s)")
-    parser.add_argument("--keep-aggregation", type=bool, nargs='?', default=False, const=True, help="Store aggregation insights into table(s)")
     parser.add_argument("--encoding-type", type=str, choices=[None, "bounds", "arle"], default=None,
                         help="encoding represented by data associated to a schema")
+    parser.add_argument("--keep-aggregation", type=bool, nargs='?', default=False, const=True, help="Store aggregation insights into table(s)")
     args = parser.parse_args()
 
     # connect to AnyLog / EdgeLake

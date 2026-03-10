@@ -155,6 +155,7 @@ class RestConn:
         }
 
         response = self.execute_get(headers=headers, parse_results=True)
+        print(f"User Command: {headers['command']}")
         pprint.pprint(response)
 
 
